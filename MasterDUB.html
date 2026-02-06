@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MasterDUB – Watch Unlimited Movies</title>
+    
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Montserrat:wght@300;400;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --gold: #ffcc00;
+            --black: #050505;
+            --sub-blue: #00d4ff;
+            --yt-red: #ff0000;
+            --tg-blue: #0088cc;
+            --tt-black: #000000;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; cursor: none; }
+        body { background: var(--black); color: #fff; font-family: 'Montserrat', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
+
+        @media (max-width: 768px) { * { cursor: auto !important; } #cursor-dot, #cursor-outline { display: none; } }
+        #cursor-dot { width: 8px; height: 8px; background: var(--gold); position: fixed; border-radius: 50%; z-index: 10001; pointer-events: none; }
+        #cursor-outline { width: 45px; height: 45px; border: 1.5px solid var(--gold); position: fixed; border-radius: 50%; z-index: 10000; pointer-events: none; transition: 0.15s ease-out; opacity: 0.6; }
+
+        .side-socials { position: fixed; left: 20px; top: 50%; transform: translateY(-50%); z-index: 5000; display: flex; flex-direction: column; gap: 12px; }
+        .side-socials a { width: 45px; height: 45px; background: rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); transition: 0.4s; text-decoration: none; }
+        .side-socials a img { width: 22px; filter: brightness(10); transition: 0.4s; }
+        .side-yt:hover { background: var(--yt-red); border-color: var(--yt-red); box-shadow: 0 0 20px rgba(255,0,0,0.5); transform: translateX(8px); }
+        .side-tg:hover { background: var(--tg-blue); border-color: var(--tg-blue); box-shadow: 0 0 20px rgba(0,136,204,0.5); transform: translateX(8px); }
+        .side-tt:hover { background: #fff; border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.5); transform: translateX(8px); }
+        .side-tt:hover img { filter: invert(1); }
+        @media (max-width: 900px) { .side-socials { display: none; } }
+
+        #backToTop { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; background: var(--gold); color: #000; border: none; border-radius: 50%; font-size: 22px; font-weight: bold; cursor: pointer; z-index: 5000; display: none; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); transition: 0.3s; }
+        #backToTop:hover { transform: translateY(-5px) scale(1.1); }
+
+        .social-btn { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 14px 30px; border-radius: 50px; font-weight: 700; font-family: 'Oswald'; text-decoration: none; text-transform: uppercase; font-size: 0.9rem; margin-top: 15px; width: 100%; max-width: 280px; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(255,255,255,0.1); color: #fff; background: rgba(255, 255, 255, 0.05); }
+        .social-btn:hover { transform: scale(1.08) translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.4); border-color: #fff; }
+        .yt-btn-hero:hover { background: var(--yt-red); }
+        .tt-btn-hero:hover { background: #fff; color: #000; }
+        .tt-btn-hero:hover img { filter: invert(1); }
+
+        .news-ticker { background: var(--gold); color: #000; height: 30px; display: flex; align-items: center; font-size: 0.75rem; font-weight: 900; overflow: hidden; position: fixed; top: 0; width: 100%; z-index: 2000; }
+        .ticker-wrap { display: flex; animation: ticker 40s linear infinite; white-space: nowrap; }
+        .ticker-item { padding: 0 40px; text-transform: uppercase; }
+        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        .top-bar { position: fixed; top: 30px; width: 100%; height: 80px; background: linear-gradient(to bottom, rgba(0,0,0,0.95), transparent); backdrop-filter: blur(15px); display: flex; align-items: center; justify-content: space-between; padding: 0 5%; z-index: 1000; border-bottom: 1px solid rgba(255,215,0,0.1); }
+        .nav-logo { width: 45px; }
+
+        .hero { height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        #hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; filter: brightness(0.3) blur(10px); transition: 1.5s; }
+        #hero-video.active { filter: brightness(0.9) blur(0px); }
+        .hero-content { position: relative; z-index: 10; text-align: center; display: flex; flex-direction: column; align-items: center; width: 90%; }
+        .hero-content h1 { font-family: 'Cinzel'; font-size: clamp(2.5rem, 8vw, 6rem); color: var(--gold); margin-bottom: 10px; }
+        .typewriter { font-size: clamp(0.8rem, 4vw, 1.2rem); color: #888; height: 24px; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 25px; }
+
+        .section-container { padding: 40px 5%; }
+        .row-header { font-family: 'Oswald'; font-size: clamp(1.8rem, 5vw, 2.2rem); color: var(--gold); margin-bottom: 40px; border-left: 5px solid var(--gold); padding-left: 20px; text-transform: uppercase; }
+        .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; margin-bottom: 80px; }
+        @media (min-width: 768px) { .movie-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; } }
+        .movie-card { background: #0d0d0d; border-radius: 15px; overflow: hidden; position: relative; transition: 0.5s; border: 1px solid rgba(255,255,255,0.05); }
+        .movie-card:hover { transform: translateY(-10px); border-color: var(--gold); }
+        .thumb-box { position: relative; aspect-ratio: 16/9; overflow: hidden; }
+        .movie-card img { width: 100%; height: 100%; object-fit: cover; }
+        .card-body { padding: 15px; }
+        .card-body h3 { font-family: 'Oswald'; font-size: 1rem; margin-bottom: 10px; text-transform: uppercase; }
+        .tag { padding: 4px 10px; border-radius: 4px; font-size: 0.65rem; font-weight: 900; text-transform: uppercase; border: 1px solid; }
+        .tag-dubbed { color: var(--gold); border-color: var(--gold); }
+        .tag-subbed { color: var(--sub-blue); border-color: var(--sub-blue); }
+
+        footer { background: #0a0a0a; padding: 60px 5% 30px; border-top: 1px solid rgba(255,215,0,0.1); }
+        .footer-social-box { display: flex; gap: 12px; margin-top: 15px; }
+        .footer-icon { width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; background: rgba(255,255,255,0.03); }
+        .footer-icon img { width: 20px; }
+        .footer-icon:hover { transform: translateY(-5px); border-color: var(--gold); }
+
+        .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* --- VIDEO PLAYER OVERLAY --- */
+        #videoPlayerOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 20000;
+            display: none; align-items: center; justify-content: center;
+        }
+        #videoPlayerOverlay video { width: 90%; max-width: 1000px; border: 2px solid var(--gold); border-radius: 10px; box-shadow: 0 0 50px rgba(255,204,0,0.2); }
+        .close-player {
+            position: absolute; top: 30px; right: 30px;
+            background: var(--gold); color: #000; border: none;
+            padding: 12px 25px; border-radius: 50px; font-family: 'Oswald';
+            font-weight: 900; cursor: pointer; transition: 0.3s;
+        }
+        .close-player:hover { transform: scale(1.1); background: #fff; }
+
+/* ප්ලේයර් එක ඕපන් වූ විට මවුස් එක පෙන්වීමට */
+.show-cursor { cursor: auto !important; }
+.show-cursor #cursor-dot, .show-cursor #cursor-outline { display: none !important; }
+
+    </style>
+</head>
+<body>
+
+    <div id="cursor-dot"></div>
+    <div id="cursor-outline"></div>
+
+    <div id="videoPlayerOverlay">
+        <button class="close-player" onclick="closePlayer()">CLOSE PLAYER ✖</button>
+        <video id="mainPlayer" controls>
+            <source id="videoSource" src="" type="video/mp4">
+        </video>
+    </div>
+
+    <div class="side-socials">
+        <a href="https://www.youtube.com" target="_blank" class="side-yt"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png"></a>
+        <a href="https://t.me" target="_blank" class="side-tg"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png"></a>
+        <a href="https://www.tiktok.com" target="_blank" class="side-tt"><img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png"></a>
+    </div>
+
+    <button id="backToTop" onclick="scrollToTop()">↑</button>
+
+    <div class="news-ticker">
+        <div class="ticker-wrap">
+            <div class="ticker-item">🔥 Trending! Harry Potter Sinhala Dubbed Series is Released Now !</div>
+            <div class="ticker-item">🎙️ New: Harry Potter 6 Movie is Sinhala Dubbing....!</div>
+<div class="ticker-item">📺 Watch Unlimited Movies With MasterDUB-King of The Dubbing World</div>
+
+        </div>
+    </div>
+
+    <header class="top-bar">
+        <div style="display:flex; align-items:center; gap:12px;">
+            <img src="logo.png" class="nav-logo">
+            <span style="font-family: 'Cinzel'; font-size: 1.5rem; color: var(--gold); font-weight: 900;">MasterDUB</span>
+        </div>
+        <input type="text" id="movieSearch" placeholder="Search..." onkeyup="searchMovies()" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,215,0,0.2); padding:8px 15px; border-radius:50px; color:white; outline:none; width: 120px;">
+    </header>
+
+    <section class="hero">
+        <canvas id="canvas" style="position: absolute; inset: 0; z-index: 2; pointer-events: none;"></canvas>
+        <video id="hero-video" loop muted playsinline autoplay><source src="MasterDUB.mp4" type="video/mp4"></video>
+        <div class="hero-content" id="hero-ui">
+            <h1>MASTERDUB</h1>
+            <div class="typewriter" id="typewriter"></div>
+            <button style="background:var(--gold); color:#000; padding:18px 50px; border-radius:50px; border:none; font-weight:900; cursor:pointer; font-family:'Oswald'; width: 100%; max-width: 280px; margin-bottom:10px;" onclick="startCinematic()">▶ WATCH EXPERIENCE</button>
+            
+            <a href="https://www.youtube.com" target="_blank" class="social-btn yt-btn-hero">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" style="width:20px;"> Watch us on youtube
+            </a>
+            <a href="https://www.tiktok.com" target="_blank" class="social-btn tt-btn-hero">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/3/34/Ionicons_logo-tiktok.svg" style="width:20px; filter:invert(1);"> Watch us on tiktok
+            </a>
+        </div>
+        <button id="exit-intro" style="position:fixed; bottom:30px; right:30px; z-index:1000; background:var(--gold); padding:15px 30px; border-radius:50px; display:none;" onclick="stopCinematic()">✖ EXIT INTRO</button>
+    </section>
+
+    <main class="section-container" id="main-content">
+        <h2 class="row-header reveal">🔥 Dubbed Masterpieces</h2>
+        <div class="movie-grid reveal">
+            <div class="movie-card" data-title="Harry Potter and The Sorcers Stone" onclick="openPlayer('trailer1.mp4')">
+                <div class="thumb-box"><img src="trailer1.jpg"></div>
+                <div class="card-body"><h3>🪄Harry Potter and The Sorcers Stone🪄</h3><span class="tag tag-dubbed">Dubbed</span></div>
+            </div>
+            <div class="movie-card" data-title="🪄Harry Potter and The Chamber of Secrets🪄" onclick="openPlayer('trailer2.mp4')">
+                <div class="thumb-box"><img src="trailer2.jpg"></div>
+                <div class="card-body"><h3>🪄Harry Potter and The Chamber of Secrets🪄</h3><span class="tag tag-dubbed">Dubbed</span></div>
+            </div>
+            <div class="movie-card" data-title="🪄Harry Potter and The Prisnor of Azkaban🪄" onclick="openPlayer('trailer3.mp4')">
+                <div class="thumb-box"><img src="trailer3.jpg"></div>
+                <div class="card-body"><h3>🪄Harry Potter and The Prisnor of Azkaban🪄</h3><span class="tag tag-dubbed">Dubbed</span></div>
+            </div>
+<div class="movie-card" data-title="🪄Harry Potter and The Goblet of Fire🪄" onclick="openPlayer('trailer4.mp4')">
+                <div class="thumb-box"><img src="trailer4.jpg"></div>
+                <div class="card-body"><h3>🪄Harry Potter and The Goblet of Fire🪄</h3><span class="tag tag-dubbed">Dubbed</span></div>
+            </div>
+<div class="movie-card" data-title="🪄Harry Potter and The Order of The Phoenix🪄" onclick="openPlayer('trailer5.mp4')">
+                <div class="thumb-box"><img src="trailer5.jpg"></div>
+                <div class="card-body"><h3>🪄Harry Potter and The Order of The Phoenix🪄</h3><span class="tag tag-dubbed">Dubbed</span></div>
+            </div>
+<div class="movie-card" data-title="🔥Nezha🔥" onclick="openPlayer('trailer9.mp4')">
+                <div class="thumb-box"><img src="trailer9.jpg"></div>
+                <div class="card-body"><h3>🔥Nezha🔥</h3><span class="tag tag-dubbed">Dubbed</span></div>
+            </div>
+            </div>
+
+
+
+
+
+        <h2 class="row-header reveal">📝 Subtitled Gems</h2>
+        <div class="movie-grid reveal">
+            <div class="movie-card" data-title="🪄Harry Potter and The Half-Blood Prince🪄" onclick="openPlayer('trailer6.mp4')">
+                <div class="thumb-box"><img src="trailer6.jpg"></div>
+                <div class="card-body"><h3>🪄Harry Potter and The Half-Blood Prince🪄</h3><span class="tag tag-subbed">Subtitled</span></div>
+            </div>
+            <div class="movie-card" data-title="🪄Harry Potter and The Deathly Hallows Part 1🪄" onclick="openPlayer('trailer7.mp4')">
+                <div class="thumb-box"><img src="trailer7.jpg"></div>
+                <div class="card-body"><h3>🪄Harry Potter and The Deathly Hallows Part 1🪄</h3><span class="tag tag-subbed">Subtitled</span></div>
+            </div>
+            <div class="movie-card" data-title="🪄Harry Potter and The Deathly Hallows Part 2🪄" onclick="openPlayer('trailer8.mp4')">
+                <div class="thumb-box"><img src="trailer8.jpg"></div>
+                <div class="card-body"><h3>🪄Harry Potter and The Deathly Hallows Part 2🪄</h3><span class="tag tag-subbed">Subtitled</span></div>
+            </div>
+
+<div class="movie-card" data-title="🚢Titanic🚢" onclick="openPlayer('trailer11.mp4')">
+                <div class="thumb-box"><img src="trailer11.jpg"></div>
+                <div class="card-body"><h3>🚢Titanic🚢</h3><span class="tag tag-subbed">Subtitled</span></div>
+            </div>
+            </div>
+
+    </main>
+
+    <footer>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:40px; margin-bottom:30px;">
+            <div>
+                <img src="logo.png" style="width:50px; margin-bottom:15px;">
+                <p style="color:#888; font-size:0.85rem;">MasterDUB Official. Sri Lanka's Home of Cinema.</p>
+            </div>
+            <div>
+                <h4 style="color:var(--gold); font-family:'Oswald'; margin-bottom:15px;">COMMUNITY</h4>
+                <div class="footer-social-box">
+                    <a href="https://www.youtube.com" target="_blank" class="footer-icon"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png"></a>
+                    <a href="https://t.me" target="_blank" class="footer-icon"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png"></a>
+                    <a href="https://www.tiktok.com" target="_blank" class="footer-icon"><img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png"></a>
+                </div>
+            </div>
+        </div>
+        <div style="text-align:center; color:#333; font-size:0.75rem; border-top:1px solid #111; padding-top:20px;">© 2024 MasterDUB Official. All Rights Reserved.</div>
+    </footer>
+
+    <script>
+        const video = document.getElementById('hero-video');
+        const ui = document.getElementById('hero-ui');
+        const btt = document.getElementById('backToTop');
+        const playerOverlay = document.getElementById('videoPlayerOverlay');
+        const mainPlayer = document.getElementById('mainPlayer');
+        const videoSource = document.getElementById('videoSource');
+
+        function openPlayer(videoFile) {
+            videoSource.src = videoFile;
+            mainPlayer.load();
+            playerOverlay.style.display = 'flex';
+            mainPlayer.play();
+        }
+        function closePlayer() {
+            playerOverlay.style.display = 'none';
+            mainPlayer.pause();
+            mainPlayer.currentTime = 0;
+        }
+
+        function startCinematic() { video.classList.add('active'); video.muted = false; video.play(); ui.style.opacity = '0'; document.getElementById('exit-intro').style.display = 'block'; }
+        function stopCinematic() { video.classList.remove('active'); video.muted = true; ui.style.opacity = '1'; document.getElementById('exit-intro').style.display = 'none'; }
+        function scrollToTop() { window.scrollTo({top: 0, behavior: 'smooth'}); }
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) btt.style.display = 'flex'; else btt.style.display = 'none';
+            document.querySelectorAll('.reveal').forEach(el => {
+                if(el.getBoundingClientRect().top < window.innerHeight - 50) el.classList.add('active');
+            });
+        });
+
+        const textElement = document.getElementById('typewriter');
+        const phrases = ["The King of Dubbing World","Crystal Clear Subtitles", "All Cinemas in Sinhala"];
+        let pIdx = 0, charIdx = 0, isDeleting = false;
+        function type() {
+            const current = phrases[pIdx];
+            textElement.textContent = isDeleting ? current.substring(0, charIdx--) : current.substring(0, charIdx++);
+            if (!isDeleting && charIdx > current.length) { isDeleting = true; setTimeout(type, 2000); }
+            else if (isDeleting && charIdx < 0) { isDeleting = false; pIdx = (pIdx + 1) % phrases.length; setTimeout(type, 500); }
+            else { setTimeout(type, isDeleting ? 60 : 120); }
+        }
+        type();
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        let particles = [];
+        for(let i=0; i<80; i++) particles.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*1.5, speed: Math.random()*0.3});
+        function drawParticles() {
+            ctx.clearRect(0,0,canvas.width, canvas.height); ctx.fillStyle = "rgba(255, 204, 0, 0.4)";
+            particles.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill(); p.y -= p.speed; if(p.y < 0) p.y = canvas.height; });
+            requestAnimationFrame(drawParticles);
+        }
+        drawParticles();
+
+        const dot = document.getElementById('cursor-dot');
+        const outline = document.getElementById('cursor-outline');
+        window.addEventListener('mousemove', (e) => {
+            dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
+            outline.style.left = e.clientX - 22 + 'px'; outline.style.top = e.clientY - 22 + 'px';
+        });
+
+        function searchMovies() {
+            let q = document.getElementById('movieSearch').value.toLowerCase();
+            document.querySelectorAll('.movie-card').forEach(card => {
+                card.style.display = card.getAttribute('data-title').toLowerCase().includes(q) ? "block" : "none";
+            });
+        }
+
+// openPlayer function එක මෙහෙම වෙනස් කරන්න
+function openPlayer(videoFile) {
+    videoSource.src = videoFile;
+    mainPlayer.load();
+    playerOverlay.style.display = 'flex';
+    mainPlayer.play();
+    // මවුස් එක පෙන්වීමට body එකට class එකක් එක් කරයි
+    document.body.classList.add('show-cursor');
+}
+
+// closePlayer function එක මෙහෙම වෙනස් කරන්න
+function closePlayer() {
+    playerOverlay.style.display = 'none';
+    mainPlayer.pause();
+    mainPlayer.currentTime = 0;
+    // මවුස් එක නැවත සඟවා Custom Cursor එක පෙන්වයි
+    document.body.classList.remove('show-cursor');
+}
+
+// Right-click disable කිරීම
+document.addEventListener('contextmenu', event => event.preventDefault());
+    </script>
+</body>
+</html>
